@@ -1,0 +1,9 @@
+.tabledata{
+    background-color: #CECECE;
+    ;
+}
+.tabledatas{
+    display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Create three equal columns */
+  gap: 20px; 
+}
