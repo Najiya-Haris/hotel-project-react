@@ -25,6 +25,7 @@
       setEditingData(data)
     
     };
+    
     const handleDeleteConfirm = async () => {
       try {
         const response = await axios.delete(`${config.apiUrl}/deleteFoodByChef`, {
