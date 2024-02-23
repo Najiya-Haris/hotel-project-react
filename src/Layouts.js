@@ -3,7 +3,11 @@ import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/
 import { Breadcrumb, Layout, Menu, theme,Avatar,Dropdown } from 'antd';
 import { Link } from 'react-router-dom';
 import './Layout.css'
-const { Header, Content, Sider } = Layout;
+import { logoutUser } from './Redux/UserReducer';
+import { useDispatch } from "react-redux";
+import {useNavigate}  from "react-router-dom"
+
+const { Header, Content,Sider } = Layout;
   
 const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
   const key = String(index + 1);
@@ -20,17 +24,32 @@ const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, i
     }),
   };
 });
+;
+
 const ProfileMenu = (
+  
+
   <Menu>
     <Menu.Item key="profile">
       <Link to="/managerprofile">Profile</Link>
     </Menu.Item>
     <Menu.Item key="logout">
-      <Link to="/logout">Logout</Link>
+      <Link 
+      >Logout</Link>
     </Menu.Item>
   </Menu>
 );
 const Layouts = (props) => {
+  const dispatch = useDispatch(); 
+const navigate=useNavigate()
+
+const handleMenuClick=(e)=>{
+  if(e.key==='logout'){
+    dispatch(logoutUser());
+    navigate("/login")
+  }
+}
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -49,7 +68,7 @@ const Layouts = (props) => {
       </div>
       
       <div className="demo-logo">
-          <Dropdown overlay={ProfileMenu} placement="bottomRight">
+          <Dropdown overlay={ProfileMenu} placement="bottomRight" onClick={handleMenuClick}>
             <Avatar className="j" size="large" icon={<UserOutlined />} />
           </Dropdown>
         </div>

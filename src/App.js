@@ -26,6 +26,7 @@ import AllDishes from "./Modules/Manager/Foodlist/AllDishes";
 import OrderList from "./Modules/Chef/OrdeList";
 import TodaysMenu from "./Modules/Supplier/TodaysMenu/TodaysMenu";
 import PaymentHistory from "./Modules/Manager/Payment/PaymentHistory";
+import Menu from "./Modules/Chef/Menu";
 
 
 function App() {
@@ -67,6 +68,7 @@ function App() {
                   <Route path="/order" element={<OrderList/>} />
                   <Route path="/todaysmenu" element={<TodaysMenu/>} />
                   <Route path="/payment" element={<PaymentHistory/>} />
+                  <Route path="/menu" element={<Menu/>} />
                 </Routes>
               </Layouts>
             ) : (

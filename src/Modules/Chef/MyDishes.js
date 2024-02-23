@@ -19,9 +19,9 @@ import { useSelector } from "react-redux";
 
 function Mydishes() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
+ 
   const token = userDetails.tokens[userDetails.tokens.length - 1];
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { Meta } = Card;
   const { Option } = Select;
   const [dishes, setDishes] = useState([]);
@@ -63,6 +63,7 @@ function Mydishes() {
           },
         }
       );
+      console.log("response",response);
       if (response.data.isSuccess) {
         const newFood = response.data.response.data[0];
 

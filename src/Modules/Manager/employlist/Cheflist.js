@@ -8,8 +8,8 @@ import { MoreOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 function Cheflist() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
-  const [visible, setIsVisible] = useState(false);
   const token = userDetails.tokens[userDetails.tokens.length - 1];
+  const [visible, setIsVisible] = useState(false);
   const [selectedChef, setSelectedChef] = useState(null);
 
   const columns = [
@@ -58,7 +58,6 @@ function Cheflist() {
     </Menu>
   );
   const handleMenuClick = async (key, record) => {
-    console.log("key", key, "record", record);
     if (key === "delete") {
       try {
         await axios.delete(
@@ -79,18 +78,26 @@ function Cheflist() {
         console.error("Error deleting chef:", error);
         message.error("Failed to delete chef");
       }
+    } else {
+      setIsVisible(true);
+      setSelectedChef(record);
     }
   };
+  // useEffect(() => {}, [selectedChef]);
 
   const [data, setData] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${config.apiUrl}/manager/viewChef`, {
-          headers: {
-            Authorization: token,
-          },
-        });
+        const response = await axios.get(
+          `${config.apiUrl}/manager/viewChef`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
 
         setData(response.data.response.data);
       } catch (error) {
@@ -101,10 +108,11 @@ function Cheflist() {
     fetchData();
   }, [token]);
   const onFinish = async (formData) => {
+    console.log("form", formData);
     try {
       if (selectedChef) {
         const response = await axios.patch(
-          `${config.apiUrl}/manager/supplierEdit`,
+          `${config.apiUrl}/manager/chefEdit`,
           formData,
           {
             headers: {
@@ -114,17 +122,16 @@ function Cheflist() {
           }
         );
 
-        const updatedSupplier = response.data.response;
+        const updatedChef = response.data.response;
 
         setData((prevData) =>
           prevData.map((item) =>
-            item.email === selectedChef.email ? updatedSupplier : item
+            item.email === selectedChef.email ? updatedChef : item
           )
         );
 
-        message.success("Supplier updated successfully");
+        message.success("chef updated successfully");
       } else {
-        console.log("hi");
         const response = await axios.post(
           `${config.apiUrl}/manager/createChef`,
           formData,
@@ -135,14 +142,15 @@ function Cheflist() {
             },
           }
         );
-        console.log("res", response);
 
-        const newChef = response.data.response[0];
-        console.log("new", newChef);
-
-        setData((prevData) => [...prevData, newChef]);
-
-        message.success("chef created successfully");
+        console.log("chef", response);
+        if (response.isSuccess) {
+          const newChef = response.data.response[0];
+          setData((prevData) => [...prevData, newChef]);
+          message.success("chef created successfully");
+        } else {
+          message.error(response.data.response);
+        }
       }
       setSelectedChef(null);
       setIsVisible(false);
@@ -152,7 +160,16 @@ function Cheflist() {
     }
   };
 
-  return <SecondaryTable columns={columns} data={data} onFinish={onFinish} />;
+  return (
+    <SecondaryTable
+      columns={columns}
+      data={data}
+      onFinish={onFinish}
+      showModals={visible}
+      editData={selectedChef}
+      setIsVisible={setIsVisible}
+    />
+  );
 }
 
 export default Cheflist;

@@ -19,7 +19,7 @@ export const managerMenuItems = [
     icon: <LaptopOutlined />,
     label: 'Food',
     children: [
-      { key: 4, label: 'All Dishes,link:"/allfood" ' },
+      { key: 4, label: 'All dishes',link:"alldishes" },
       { key: 5, label: 'Daily dishes' },
     ],
   },

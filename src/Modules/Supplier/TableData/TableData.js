@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./TableData.css";
 import table from "../../../assets/table.svg";
 import tables from "../../../assets/tables.svg";
@@ -6,15 +6,15 @@ import ConfirmationModal from "../../../Components/ConfirmationModal";
 import { message, Button, Input, Upload, Modal, Form } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"
+import axios from "axios";
 import config from "../../../config/Config";
-import {useSelector} from "react-redux"
-import tableimage from "../../../assets/table.svg"
+import { useSelector } from "react-redux";
+import tableimage from "../../../assets/table.svg";
 
 function TableData() {
   const navigate = useNavigate();
   const [tableData, setTableData] = useState([]);
-const normFile = (e) => {
+  const normFile = (e) => {
     if (Array.isArray(e)) {
       return e;
     }
@@ -35,34 +35,40 @@ const normFile = (e) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(`${config.apiUrl}/viewTable`, {}, {
-          headers: {
-            Authorization: token,
-          },
-        });
-        console.log("res",response);
-  
+        const response = await axios.post(
+          `${config.apiUrl}/viewTable`,
+          {},
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+
         setTableData(response.data.response);
+      
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-  
+
     fetchData();
   }, [token]);
-  
+
   const onFinish = async (values) => {
     try {
       const response = await axios.post(`${config.apiUrl}/addTable`, values, {
         headers: {
           Authorization: token,
-          "Content-Type": "application/json", 
+          "Content-Type": "application/json",
         },
       });
       setTableData([...tableData, response.data.response.data[0]]);
-      console.log("tableData",tableData);
+      console.log("tableData", tableData);
       form.resetFields();
+      setIsModalOpen(false)
       message.success("Table created successfully");
+
     } catch (error) {
       console.error("Error:", error);
       message.error("Failed to create table");

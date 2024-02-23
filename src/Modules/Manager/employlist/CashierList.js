@@ -10,13 +10,11 @@ import { MoreOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 function CashierList() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
-
   const token = userDetails.tokens[userDetails.tokens.length - 1];
-
   const [editData, setEditData] = useState(null);
   const [formData, setFormData] = useState({});
-  const [isVisible, setIsVisible] = useState(false);
-  const [selectedCashier,setSelectedCashier]=useState(null);
+  const [visible, setIsVisible] = useState(false);
+  const [selectedCashier, setSelectedCashier] = useState(null);
 
   const columns = [
     {
@@ -85,11 +83,9 @@ function CashierList() {
         console.error("Error deleting cashier:", error);
         message.error("Failed to delete cashier");
       }
-    }else if(key==="edit"){
+    } else if (key === "edit") {
       setIsVisible(true);
       setEditData(record);
-      
-
     }
   };
 
@@ -138,7 +134,6 @@ function CashierList() {
 
         message.success("cashier updated successfully");
       } else {
-        console.log("hi");
         const response = await axios.post(
           `${config.apiUrl}/manager/createCashier`,
           formData,
@@ -149,14 +144,14 @@ function CashierList() {
             },
           }
         );
-        console.log("res", response);
-
-        const newCashier = response.data.response[0];
-        console.log("new", newCashier);
-
-        setData((prevData) => [...prevData, newCashier]);
-
-        message.success("cashier created successfully");
+        console.log("casjier", response);
+        if (response.isSuccess) {
+          const newCashier = response.data.response[0];
+          setData((prevData) => [...prevData, newCashier]);
+          message.success("cashier created successfully");
+        } else {
+          message.error(response.data.response);
+        }
       }
       setSelectedCashier(null);
       setIsVisible(false);
@@ -165,29 +160,15 @@ function CashierList() {
       message.error("Failed to save cashier");
     }
   };
-  return <SecondaryTable columns={columns} data={data} onFinish={onFinish}  isVisible={isVisible}
-  setIsVisible={setIsVisible} />;
+  return (
+    <SecondaryTable
+      columns={columns}
+      data={data}
+      editData={selectedCashier}
+      onFinish={onFinish}
+      showModals={ visible }
+      setIsVisible={setIsVisible}
+    />
+  );
 }
 export default CashierList;
-
-// {
-//   "isSuccess": true,
-//   "response": [
-//       {
-//           "name": "nao",
-//           "password": "$2b$10$hXyyqV2TVTW9icLHQ1fpvODvA2MuKabmgMW8hXRv.V5rD6RPrPCWO",
-//           "email": "najiya@gmail.com",
-//           "gender": "male",
-//           "phoneNumber": "1234",
-//           "userType": "supplier",
-//           "experience": "2",
-//           "tokens": [],
-//           "deleted": false,
-//           "_id": "65c371bfe0489d98ef0f1631",
-//           "__v": 0,
-//           "createdAt": "2024-02-07T12:04:15.902Z",
-//           "updatedAt": "2024-02-07T12:04:15.902Z"
-//       }
-//   ],
-//   "error": false
-// }

@@ -132,7 +132,6 @@ const SupplierList = () => {
 
         message.success("Supplier updated successfully");
       } else {
-        console.log("hi");
         const response = await axios.post(
           `${config.apiUrl}/manager/createSupplier`,
           formData,
@@ -144,14 +143,16 @@ const SupplierList = () => {
           }
         );
         console.log("res", response);
+        if(response.isSuccess){
 
         const newSupplier = response.data.response[0];
-        console.log("new", newSupplier);
-
         setData((prevData) => [...prevData, newSupplier]);
 
         message.success("Supplier created successfully");
+      }else{
+        message.error(response.data.response)
       }
+    }
       setSelectedSupplier(null);
       setIsVisible(false);
     } catch (error) {
