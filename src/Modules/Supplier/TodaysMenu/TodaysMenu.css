@@ -1,5 +1,5 @@
 .button1 {
-  width: 71px;
+  width: 77px;
   height: 46px;
   flex-shrink: 0;
   border-radius: 8px;
@@ -8,7 +8,6 @@
   margin-left: 12px;
   justify-content: end;
   align-items: center;
-  display: inline-flex;
   box-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.09), -10px -10px 20px 0px #fff;
 }
 .button2 {
@@ -17,10 +16,10 @@
   flex-shrink: 0;
   border-radius: 8px;
   padding-left: 12px;
-  margin-left: 42rem;
+  margin-left: 44rem;
   justify-content: end;
   align-items: center;
-  display: inline-flex;
+  /* display: inline-flex; */
   box-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.09), -10px -10px 20px 0px #fff;
   background: rgb(112, 199, 112);
 }

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import SecondaryTable from "../../../Components/SecondaryTable";
+import SecondaryTable from "../../../Components/MainTable/SecondaryTable";
 import axios from "axios";
 import config from "../../../config/Config";
 import { useSelector } from "react-redux";
 import { Button, Dropdown, Menu, message } from "antd";
 import { MoreOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { viewChef } from "../../../Service/Manager";
 
 function Cheflist() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
@@ -90,15 +91,8 @@ function Cheflist() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `${config.apiUrl}/manager/viewChef`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-
+        const response = await viewChef(token)
+console.log("respo",response);
         setData(response.data.response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -107,6 +101,7 @@ function Cheflist() {
 
     fetchData();
   }, [token]);
+  console.log("data", data);
   const onFinish = async (formData) => {
     console.log("form", formData);
     try {

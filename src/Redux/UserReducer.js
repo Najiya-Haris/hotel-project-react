@@ -14,12 +14,16 @@ const userSlice = createSlice({
       const userDetails = action.payload;
       return { ...state, loginUserDetails: userDetails };
     },
+    updateUserDetails: (state, action) => {
+      const updatedUserDetails = action.payload;
+      return { ...state, loginUserDetails: updatedUserDetails };
+    },
     logoutUser: (state) => {
       return { ...state, loginUserDetails: null }; // Reset loginUserDetails to null on logout
     },
   },
 });
 
-export const { getUserLoginDetails, logoutUser } = userSlice.actions;
+export const { getUserLoginDetails,updateUserDetails, logoutUser } = userSlice.actions;
 
 export default userSlice.reducer;

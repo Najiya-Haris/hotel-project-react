@@ -1,8 +1,12 @@
-import React from "react";
-import Tables from "../../Components/Tables";
-import { Button, InputNumber } from "antd";
-
-function Menu() {
+import React, { useDebugValue, useEffect } from "react";
+import Tables from "../../../Components/Table/Tables";
+import { Button, InputNumber,message } from "antd";
+import axios from "axios"
+import config from "../../../config/Config";
+import {useSelector} from "react-redux"
+function ChefMenu() {
+  const userDetails = useSelector((state) => state.user.loginUserDetails);
+  const token = userDetails.tokens[userDetails.tokens.length - 1];
   const columns = [
     {
       title: "Dish Name",
@@ -26,21 +30,11 @@ function Menu() {
       title: "stock",
       dataIndex: "stock",
       key: "stock",
-      render: (text, record) => (
-        <>
-          <InputNumber
-            defaultValue={text}
-            min={0}
-            onChange={(value) => handleQuantityChange(record.key, value)}
-          />
-        </>
-      ),
+  
     },
   
   ];
-  const handleQuantityChange = (key, value) => {
-    console.log(`Quantity of dish with key ${key} changed to ${value}`);
-  };
+
 
   const tableData = [
     {
@@ -64,6 +58,27 @@ function Menu() {
     
     },
   ];
+
+  useEffect(async () => {
+    try {
+      const response = await axios.post(`${config.apiUrl}/Todaysmenu`, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("responsemenu :",response);
+      if(response.data.isSuccess){
+ // setDailyDishes(response.data.response);
+      }else{
+        message.error(response.data.error)
+      }
+     
+    } catch (error) {
+      console.error("Error fetching dishes:", error);
+    }
+  }, []);
+
   return (
     <div>
       <Tables columns={columns} dataSource={tableData} />
@@ -71,4 +86,4 @@ function Menu() {
   );
 }
 
-export default Menu;
+export default ChefMenu;

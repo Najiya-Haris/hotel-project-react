@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Tables from "../../../Components/Tables";
-import PrimaryTable from "../../../Components/MainTable";
-import SecondaryTable from "../../../Components/SecondaryTable";
+import Tables from "../../../Components/Table/Tables";
+import PrimaryTable from "../../../Components/MainTable/MainTable";
+import SecondaryTable from "../../../Components/MainTable/SecondaryTable";
 import axios from "axios";
 import config from "../../../config/Config";
 import { useSelector } from "react-redux";

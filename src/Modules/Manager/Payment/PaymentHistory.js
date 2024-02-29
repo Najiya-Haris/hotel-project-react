@@ -1,5 +1,5 @@
 import React from 'react'
-import Tables from '../../../Components/Tables';
+import Tables from '../../../Components/Table/Tables';
 
 function PaymentHistory() {
     const columns = [

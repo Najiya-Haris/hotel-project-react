@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./TableData.css";
 import table from "../../../assets/table.svg";
 import tables from "../../../assets/tables.svg";
-import ConfirmationModal from "../../../Components/ConfirmationModal";
+import ConfirmationModal from "../../../Components/ConfirmationModal/ConfirmationModal";
 import { message, Button, Input, Upload, Modal, Form } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";

@@ -12,16 +12,18 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import config from "../../config/Config";
-import "./MyDishes.css";
-import FoodCard from "../../Components/FoodCrad";
+import config from "../../../config/Config";
+import "../MyDish/MyDishes.css";
+import FoodCard from "../../../Components/FoodCarad/FoodCrad";
 import { useSelector } from "react-redux";
 
 function Mydishes() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
- 
+
   const token = userDetails.tokens[userDetails.tokens.length - 1];
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [form] = Form.useForm();
+  const [editData, setEditingData] = useState(false);
+
   const { Meta } = Card;
   const { Option } = Select;
   const [dishes, setDishes] = useState([]);
@@ -32,6 +34,7 @@ function Mydishes() {
     }
     return e?.fileList;
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,9 +43,12 @@ function Mydishes() {
             Authorization: token,
           },
         });
-        console.log("res", response);
-
-        setDishes(response.data.response.data);
+        console.log("getmydishes", response);
+        if(response.data.isSuccess){
+          setDishes(response.data.response);
+        }else{
+          message.error(response.data.error)
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -53,25 +59,38 @@ function Mydishes() {
 
   const onFinish = async (FormData) => {
     try {
-      const response = await axios.post(
-        `${config.apiUrl}/addFoodByChef`,
-        FormData,
-        {
-          headers: {
-            Authorization: token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log("response",response);
-      if (response.data.isSuccess) {
-        const newFood = response.data.response.data[0];
+      if (!editData) {
+        const response = await axios.post(
+          `${config.apiUrl}/addFoodByChef`,
+          FormData,
+          {
+            headers: {
+              Authorization: token,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        if (response.data.isSuccess) {
+          const newFood = response.data.response.data[0];
 
-        setDishes((prevData) => [...prevData, newFood]);
-        message.success("Dish added successfully");
-        console.log(dishes, "dishes");
+          setDishes((prevData) => [...prevData, newFood]);
+          message.success("Dish added successfully");
+         
+        } else {
+          message.error(response.data.message);
+        }
       } else {
-        message.error(response.data.message);
+        const response = await axios.post(
+          `${config.apiUrl}/editMyDishes`,
+          FormData,
+          {
+            headers: {
+              Authorization: token,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("response", response);
       }
     } catch (err) {
       console.log("Error in adding dish:", err);
@@ -80,6 +99,15 @@ function Mydishes() {
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const editingModal = (dish) => {
+    setEditingData(true);
+    setIsModalOpen(true);
+    form.setFieldsValue({
+      name: dish.name,
+      description: dish.description,
+      category: dish.category,
+    });
+  };
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -122,6 +150,7 @@ function Mydishes() {
             onFinish={onFinish}
             autoComplete="off"
             encType="multipart/form-data"
+            form={form}
           >
             <Form.Item
               label="name of food"
@@ -194,6 +223,7 @@ function Mydishes() {
             data={dish}
             setDishes={setDishes}
             setModalOpen={setIsModalOpen}
+            editingModal={editingModal}
             linkTo="/single"
           />
         ))}

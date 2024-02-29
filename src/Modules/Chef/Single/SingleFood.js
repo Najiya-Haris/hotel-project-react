@@ -1,5 +1,5 @@
 import React from 'react'
-import "./MyDishes.css"
+// import "./MyDishes.css"
 import {Card} from "antd"
 
 function SingleFood() {

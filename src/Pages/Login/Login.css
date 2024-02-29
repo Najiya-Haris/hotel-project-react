@@ -1,6 +1,6 @@
 .login_container{
     width: 100%x;
-    height: 554px;
+    height: 544px;
     background-color: #EEE;;
     
 }
@@ -10,10 +10,13 @@ height: 40px;
 flex-shrink: 0;
 background-color:  var(--Tertiary, #5E5E5E);;
 }
+.formm{
+    margin-top: 12px;
+}
 .log_card {
     width: 520px;
     margin: auto;
-    margin-top: 64px;
+    margin-top: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,6 +29,7 @@ font-size: 24px;
 font-style: normal;
 font-weight: 700;
 line-height: 36px; /* 150% */
+margin-top: 50px;
 
 }
 .email_text{

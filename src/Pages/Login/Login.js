@@ -3,12 +3,12 @@ import "./Login.css";
 import React, { useState } from "react";
 import { Button, Form, Input, Radio } from "antd";
 import axios from "axios";
-import config from "../config/Config";
+import config from "../../config/Config";
 import { message } from "antd";
 // import { getMnagerLoginDetails } from "../Redux/ManagerReducer"
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getUserLoginDetails } from "../Redux/UserReducer";
+import { getUserLoginDetails } from "../../Redux/UserReducer";
 function Login() {
   const [value, setValue] = useState({
     email: "",
@@ -52,25 +52,31 @@ function Login() {
     }
 
     try {
-      const { email, password, userType } = value; // Destructure userType
+      const { email, password, userType } = value;
       const response = await axios.post(
         `${config.apiUrl}/login`,
         {
           email,
           password,
-          userType, // Include userType in the request
+          userType, 
         }
       );
       console.log("login response", response);
       if (response.data.isSuccess) {
-        const  user  = response.data.response.data;
+        const  user  = response.data.response;
         dispatch(getUserLoginDetails(user));
         navigate(`/${user.userType}`); 
+      }else if(response && response.data.error){
+        message.error(response.data.response ? response.data.response.data : "" )
       }
     } catch (error) {
       console.log("error");
     }
   };
+  const navigateToForgetPassword = () => {
+    // Navigate to the forget password page
+    navigate("/forget");
+  }
 
   return (
     <div className="login_container">
@@ -91,9 +97,11 @@ function Login() {
               maxWidth: formLayout === "inline" ? "none" : 600,
             }}
           >
-            <Form.Item className="welcome" label="Welcome Back" name="layout">
+              <div className="formm">
+            {/* <Form.Item className="welcome" label="Welcome Back" name="layout">
               <Radio.Group value={formLayout}></Radio.Group>
-            </Form.Item>
+            </Form.Item> */}
+          
             <Form.Item label="enter your email">
               <Input
                 className="input_container"
@@ -147,6 +155,8 @@ function Login() {
                 <div className="submit_text">submit</div>
               </Button>
             </Form.Item>
+            <div ><Button className="ml-96"onClick={navigateToForgetPassword}></Button>forgetpassword</div>
+            </div>
           </Form>
         </div>
       </div>
