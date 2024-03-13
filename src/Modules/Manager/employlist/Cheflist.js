@@ -12,6 +12,25 @@ function Cheflist() {
   const token = userDetails.tokens[userDetails.tokens.length - 1];
   const [visible, setIsVisible] = useState(false);
   const [selectedChef, setSelectedChef] = useState(null);
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${config.apiUrl}/manager/viewChef`, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        console.log("chefres", response);
+
+        setData(response.data.response.data.chefs);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const columns = [
     {
@@ -69,11 +88,9 @@ function Cheflist() {
             },
           }
         );
-
         setData((prevData) =>
           prevData.filter((item) => item._id !== record._id)
         );
-
         message.success("chef deleted successfully");
       } catch (error) {
         console.error("Error deleting chef:", error);
@@ -85,25 +102,8 @@ function Cheflist() {
     }
   };
   // useEffect(() => {}, [selectedChef]);
-
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await viewChef(token)
-console.log("respo",response);
-        setData(response.data.response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [token]);
-  console.log("data", data);
+ 
   const onFinish = async (formData) => {
-    console.log("form", formData);
     try {
       if (selectedChef) {
         const response = await axios.patch(
@@ -112,19 +112,17 @@ console.log("respo",response);
           {
             headers: {
               Authorization: token,
-              "Content-Type": "multipart/form-data",
+              // "Content-Type": "multipart/form-data",
             },
           }
         );
-
+        console.log("edit", response);
         const updatedChef = response.data.response;
-
         setData((prevData) =>
           prevData.map((item) =>
             item.email === selectedChef.email ? updatedChef : item
           )
         );
-
         message.success("chef updated successfully");
       } else {
         const response = await axios.post(
@@ -133,13 +131,13 @@ console.log("respo",response);
           {
             headers: {
               Authorization: token,
-              "Content-Type": "multipart/form-data",
+              // "Content-Type": "multipart/form-data",
             },
           }
         );
 
         console.log("chef", response);
-        if (response.isSuccess) {
+        if (response.data.isSuccess) {
           const newChef = response.data.response[0];
           setData((prevData) => [...prevData, newChef]);
           message.success("chef created successfully");

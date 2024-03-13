@@ -40,6 +40,19 @@ font-style: normal;
 font-weight: 700;
 line-height: normal;
 }
+.button3{
+    width: 120px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #f9f9f9;
+    padding-left: 12px;
+    margin-left: 322px;
+    justify-content: end;
+    align-items: center;
+    box-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.09), -10px -10px 20px 0px #fff;
+
+}
 .input_container{
     width: 470px;
     height: 50px;

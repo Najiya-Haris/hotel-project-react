@@ -23,20 +23,24 @@ export const managerMenuItems = [
     label: "Food",
     children: [
       { key: 4, label: "All dishes", link: "alldishes" },
-      { key: 5, label: "Daily dishes" },
+     
     ],
   },
   {
-    key: "sub2",
+    key: "sub3",
     icon: <LaptopOutlined />,
-    label: "TableData",
-    children: [{ key: 4, label: "tableinfo", link: "tableview" }],
+    label: "Orders",
+    children: [
+      { key: 4, label: "orderlist", link: "orderlistmanager" },
+      { key: 4, label: "tableview", link: "tableviewmanager" },
+    ],
   },
+
   {
     key: "sub3",
     icon: <NotificationOutlined />,
     label: "Payment History",
-    children: [],
+    children: [{ key: 4, label: "payment", link: "payment" }],
   },
 ];
 
@@ -48,7 +52,7 @@ export const chefMenuItems = [
     children: [
       { key: 1, label: "my dishes", link: "/mydishes" },
       { key: 2, label: "daily dishes",link:"/dailydish" },
-      { key: 3, label: "todays dishes",link:"/menu" },
+  
     ],
   },
   {
@@ -57,7 +61,7 @@ export const chefMenuItems = [
     label: "orderlist",
     children: [
       { key: 4, label: "order",link: "orderlist"},
-      { key: 5, label: "Todays dish" },
+  
     ],
   },
 ];
@@ -83,12 +87,7 @@ export const supplierMenuItems = [
   },
 ];
 export const cashierMenuItems = [
-  {
-    key: "sub1",
-    icon: <UserOutlined />,
-    label: "tableview",
-    children: [{ key: 3, label: "tabledetails", link: "/tableview" }],
-  },
+
   {
     key: "sub2",
     icon: <LaptopOutlined />,

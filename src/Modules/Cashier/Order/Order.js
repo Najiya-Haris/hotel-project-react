@@ -1,85 +1,62 @@
-import React,{useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import Tables from "../../../Components/Table/Tables";
-import { InputNumber,Button } from "antd";
-import axios from "axios"
+import { InputNumber, Button } from "antd";
+import axios from "axios";
 import config from "../../../config/Config";
-import {useSelector} from "react-redux"
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function Order() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
   const token = userDetails.tokens[userDetails.tokens.length - 1];
+  const navigate = useNavigate();
   const columns = [
     {
       title: "Table Name",
-      dataIndex: "tablename",
-      key: "tablename",
+      dataIndex: "tableName",
+      key: "tableName",
     },
     {
-      title: "Dish Name",
-      dataIndex: "dishName",
-      key: "dishName",
-    },
-    {
-      title: "Total price",
-      dataIndex: "total",
-      key: "totalprice",
-    },
-    {
-      title: "Order taken by",
-      dataIndex: "ordertakenby",
-      key: "ordertakenby",
+      title: "Supplier Name",
+      dataIndex: "supplierName",
+      key: "supplierName",
     },
     {
       key: "4",
-      title: "status",
+      title: "",
       render: (record) => {
         return (
           <>
-            <Button className="act">Pay</Button>
+            <Button className="act" onClick={() => navigate("/billing")}>
+              view details
+            </Button>
           </>
         );
       },
     },
   ];
-
-  const tableData = [
-    {
-      key: "1",
-      dishName: "Dish 1",
-      total: 7777,
-      ordertakenby: "supplier1",
-      tablename:"T1",
-      
-    },
-    {
-      key: "2",
-      dishName: "dish2",
-      total: 999,
-      ordertakenby: "supplier1",
-      tablename:"T1"
-    },
-  ];
+  const [data, setData] = useState([]);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${config.apiUrl}/viewOrdersServed`, {
+      const response = await axios.get(`${config.apiUrl}/getReadyToPaymentOrders`, {
         headers: {
           Authorization: token,
         },
       });
-      console.log("res", response);
+      console.log("cash",response);
 
-      // setDishes(response.data.response.data);
+      setData(response.data.response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  
-    useEffect(() => {
+
+  useEffect(() => {
     fetchData();
   }, [token]);
 
-  return <Tables columns={columns} dataSource={tableData} />;
+  return <Tables columns={columns} dataSource={data} />;
 }
 
 export default Order;

@@ -25,10 +25,7 @@ const Tables = ({ columns, dataSource }) => {
     <div>
       <Divider />
       <Table
-        rowSelection={{
-          type: "checkbox",
-          ...rowSelection,
-        }}
+      
         columns={columns}
         dataSource={dataSource}
       />

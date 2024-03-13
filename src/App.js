@@ -23,7 +23,7 @@ import Mydishes from "./Modules/Chef/MyDish/MyDishes";
 import SingleFood from "./Modules/Chef/Single/SingleFood";
 import TableData from "./Modules/Supplier/TableData/TableData";
 import AllDishes from "./Modules/Manager/Foodlist/AllDishes";
-import OrderList from "./Modules/Chef/OrderList/OrdeList";
+import OrderList from "./Modules/Supplier/OrderList/OrdeList";
 import TodaysMenu from "./Modules/Supplier/TodaysMenu/TodaysMenu";
 import PaymentHistory from "./Modules/Manager/Payment/PaymentHistory";
 import TableView from "./Modules/Manager/TableView/TableView";
@@ -31,7 +31,15 @@ import DailyDishes from "./Modules/Chef/DailyDish/DailyDishes";
 import ChefMenu from "./Modules/Chef/ChefMenu/ChefMenu";
 import Order from "./Modules/Cashier/Order/Order";
 import Forget from "./Pages/ForgetPage/Forget";
-
+import Billing from "./Modules/Cashier/BillingDetails/Billing";
+import RazorPay from "./Modules/Cashier/RazorPay/RazorPay";
+import Otp from "./Pages/otp/Otp";
+import TableViews from "./Modules/Manager/Tabledatas/Tableviews";
+import Success from "./Modules/Cashier/Success/Success";
+import NotFound from "./Pages/Notfound/NotFound";
+import Verify from "./Pages/verify/Verify";
+import Orderdetails from "./Modules/Manager/Order/Orderdetails"
+import ShowTable from "./Modules/Manager/ShowTable/ShowTable";
 
 function App() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
@@ -54,6 +62,8 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/forget" element={<Forget/>} />
+        <Route path="/otp" element={<Otp/>} />
+        <Route path="/verify" element={<Verify/>} />
         <Route
           path="/*"
           element={
@@ -79,6 +89,14 @@ function App() {
                   <Route path="/menu" element={<ChefMenu/>} />
                   <Route path="/tableview" element={<TableView/>} />
                   <Route path="/dailydish" element={<DailyDishes/>} />
+                  <Route path="/billing" element={<Billing/>} />
+                  <Route path="/razorpay" element={<RazorPay/>} />
+                  <Route path="/tabless" element={<TableViews/>} />
+                  <Route path="/paymentsuccess" element={<Success/>} />
+                  <Route path="/orderlistmanager" element={<Orderdetails/>} />
+                  <Route path="/tableviewmanager" element={<ShowTable/>} />
+
+                  
                 </Routes>
               </Layouts>
             ) : (
@@ -86,6 +104,7 @@ function App() {
             )
           }
         />
+         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

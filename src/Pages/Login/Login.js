@@ -1,6 +1,6 @@
 
 import "./Login.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Radio } from "antd";
 import axios from "axios";
 import config from "../../config/Config";
@@ -9,7 +9,11 @@ import { message } from "antd";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getUserLoginDetails } from "../../Redux/UserReducer";
+import {useSelector} from "react-redux"
 function Login() {
+    const userDetails = useSelector((state) => state.user.loginUserDetails);
+    console.log("userdetailslogin",userDetails);
+  // const token = userDetails?.tokens[userDetails?.tokens.length - 1];
   const [value, setValue] = useState({
     email: "",
     password: "",
@@ -19,6 +23,13 @@ function Login() {
   const [formLayout, setFormLayout] = useState("vertical");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  useEffect(()=>{
+    if(userDetails){
+      navigate(`/${userDetails.userType}`);
+    
+    }
+
+  },[userDetails])
 
   const onFormLayoutChange = ({ layout }) => {
     setFormLayout(layout);
@@ -66,8 +77,8 @@ function Login() {
         const  user  = response.data.response;
         dispatch(getUserLoginDetails(user));
         navigate(`/${user.userType}`); 
-      }else if(response && response.data.error){
-        message.error(response.data.response ? response.data.response.data : "" )
+      }else {
+        message.error(response.data.error?.data)
       }
     } catch (error) {
       console.log("error");
@@ -155,7 +166,7 @@ function Login() {
                 <div className="submit_text">submit</div>
               </Button>
             </Form.Item>
-            <div ><Button className="ml-96"onClick={navigateToForgetPassword}></Button>forgetpassword</div>
+            <div ><Button className="button3"onClick={navigateToForgetPassword}>forgetpassword</Button></div>
             </div>
           </Form>
         </div>

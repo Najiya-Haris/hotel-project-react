@@ -13,27 +13,18 @@ import { useSelector } from "react-redux";
 import DailyDishes from "../../Modules/Chef/DailyDish/DailyDishes";
 
 const FoodCard = ({
-  data,
-  name,
-  onClick,
-  price,
-  setDishes,
-  setModalOpen,
-  editingModal,
-  dailyDishes
+   data, name, onClick, price, setDishes, setModalOpen, editingModal 
 }) => {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
   const token = userDetails.tokens[userDetails.tokens.length - 1];
- 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const handleDeleteClick = () => {
     setIsDeleteModalVisible(true);
   };
 
   const handleEditClick = () => {
-    editingModal(data);
+    editingModal(data._id);
   };
-
 
   const handleDeleteConfirm = async () => {
     try {
@@ -69,25 +60,29 @@ const FoodCard = ({
       <Card
         hoverable
         style={{ width: 240, margin: 10 }}
-        cover={<img alt={data.title} src={tabless} />}
+        cover={<img alt={data?.title} src={tabless} />}
         onClick={onClick}
       >
-        <Card.Meta title={data.name} description={data.description} />
-        {price && (
-  <p style={{ marginTop: 10, fontWeight: "bold" }}>Price: {price}</p>
-)}
+        <Card.Meta title={data?.name} description={data?.description} />
+        {data.price && (
+          <p style={{ marginTop: 10, fontWeight: "bold" }}>Price: {data?.price}</p>
+        )}
+        
         <div style={{ textAlign: "right" }}>
-          {[
-            <DeleteOutlined
-              style={{ marginRight: "15px" }}
-              onClick={handleDeleteClick}
-            />,
-            <EditOutlined key="edit" onClick={handleEditClick} />,
-          ]}
+          {userDetails.userType !== "manager" && (
+            <>
+              <DeleteOutlined
+                style={{ marginRight: "15px" }}
+                onClick={handleDeleteClick}
+              />
+              <EditOutlined key="edit" onClick={() => handleEditClick(data._id)} />
+            </>
+          )}
         </div>
+   
         {/* {price && <p>Price: {price}</p>} */}
       </Card>
-     
+
       <ConfirmationModal
         isOpen={isDeleteModalVisible}
         message="Are you sure you want to delete this item?"

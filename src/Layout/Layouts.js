@@ -4,12 +4,15 @@ import {
   NotificationOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Layout, Menu, theme, Avatar, Dropdown } from "antd";
+import { Layout, Menu, theme, Avatar, Dropdown } from "antd";
 import { Link } from "react-router-dom";
 import "./Layout.css";
 import { logoutUser } from "../Redux/UserReducer";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import config from "../config/Config";
+import { useSelector } from "react-redux";
 
 const { Header, Content, Sider } = Layout;
 const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
@@ -30,11 +33,20 @@ const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
   }
 );
 const Layouts = (props) => {
+  const userDetails = useSelector((state) => state.user.loginUserDetails);
+  const token = userDetails.tokens[userDetails.tokens.length - 1];
+  let userType = userDetails.userType;
+  console.log("fcccccccccccc", userType);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleMenuClick = (e) => {
     if (e.key === "logout") {
-      console.log("hiii");
+      const response = axios.delete(`${config.apiUrl}/logout`, userType, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      console.log("hiii", response);
       dispatch(logoutUser());
       navigate("/login");
     }
@@ -137,7 +149,6 @@ const Layouts = (props) => {
             }}
           >
             {props.children}
-            {console.log("props.children:", props.children)}
           </Content>
         </Layout>
       </Layout>

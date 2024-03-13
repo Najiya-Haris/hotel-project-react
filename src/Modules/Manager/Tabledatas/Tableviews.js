@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./TableData.css";
+// import "./TableData.css";
 import table from "../../../assets/table.svg";
 import tables from "../../../assets/tables.svg";
 import ConfirmationModal from "../../../Components/ConfirmationModal/ConfirmationModal";
@@ -11,8 +11,9 @@ import config from "../../../config/Config";
 import { useSelector } from "react-redux";
 import tableimage from "../../../assets/table.svg";
 import { useLocation } from "react-router-dom";
+import tableImage2 from "../../../assets/tables.svg"
 
-function TableData() {
+function TableViews() {
   const { state } = useLocation();
   // const { message } = state
 
@@ -105,88 +106,26 @@ function TableData() {
 
   return (
     <div>
-      <div>
-        <h1>select your table</h1>
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button
-            style={{ backgroundColor: "green", borderColor: "green" }}
-            type="primary"
-            danger
-            onClick={setIsModalOpen}
-          >
-            Add
-          </Button>
-          <Modal
-            title="Basic Modal"
-            open={isModalOpen}
-            onOk={handleOk}
-            onCancel={handleCancel}
-            footer={false}
-          >
-            <Form
-              name="basic"
-              labelCol={{
-                span: 8,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              style={{
-                maxWidth: 600,
-              }}
-              initialValues={{
-                remember: true,
-              }}
-              onFinish={onFinish}
-              autoComplete="off"
-            >
-              <Form.Item
-                label="tablename"
-                name="name"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your username!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="upload"
-                label="image"
-                valuePropName="fileList"
-                getValueFromEvent={normFile}
-              >
-                <Upload name="logo" action="/upload.do" listType="picture">
-                  <Button icon={<UploadOutlined />}>Click to upload</Button>
-                </Upload>
-              </Form.Item>
-              <Button htmlType="submit">Submit</Button>
-            </Form>
-          </Modal>
-        </div>
-      </div>
       <div className="tabledatas mt-6 w-[900px] h-[400px]">
-        {tableData.map((tableItem, index) => (
+        {tableData.map((tableItem, index) =>
+            console.log(tableItem)
+            (
           <div
             key={index}
             className="table-item"
             onClick={() => handleConfirmTableModalOpen(tableItem._id)}
           >
-            <img src={tableimage} />
+            {tableItem.status==="selected"?
+            
+            <img src={tableimage} />:<img src={tableImage2} />
+        }
             <div className="table-name ml-12">{tableItem.name}</div>
           </div>
         ))}
-        <ConfirmationModal
-          isOpen={isConfirmTableModalOpen}
-          message="Are you sure you want to cofirm this table?"
-          onClose={() => setIsConfirmTableModalOpen(false)}
-          onConfirm={()=>handleConfirm(selectedTableId,status)}
-        />
+      
       </div>
     </div>
   );
 }
 
-export default TableData;
+export default TableViews;

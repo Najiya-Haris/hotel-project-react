@@ -16,9 +16,11 @@ function AllDishes() {
   const [dishesWithPrices, setDishesWithPrices] = useState([]);
   const [Dishes, setDishes] = useState([]);
   const [dailyDishes, setDailyDishes] = useState([]);
+  const [priceAlreadyAdded, setPriceAlreadyAdded] = useState(false);
   const showModal 
   = (dish) => {
     setSelectedDish(dish);
+    setPriceAlreadyAdded(!!dish.price);
     setIsModalOpen(true);
   };
 
@@ -45,6 +47,8 @@ function AllDishes() {
             "Content-Type": "application/json",
           },
         }
+        
+        
       );
       console.log("priceresponse", response);
       const updatedDishes = Dishes.map((dish) => {
@@ -60,7 +64,6 @@ function AllDishes() {
       console.error("Error updating price:", error);
     }
   };
- 
 
   useEffect(() => {
     const fetchDishes = async () => {
@@ -111,14 +114,17 @@ function AllDishes() {
         footer={null}
       >
 
-        <Form onFinish={handleSubmit}>
-          <Form.Item label="Price" name="price">
-            <Input />
-          </Form.Item>
-          <Form.Item>
-            <Button htmlType="submit">Add Price</Button>
-          </Form.Item>
-        </Form>
+{priceAlreadyAdded && <p>Price already added for this dish</p>}
+        {!priceAlreadyAdded && (
+          <Form onFinish={handleSubmit}>
+            <Form.Item label="Price" name="price">
+              <Input />
+            </Form.Item>
+            <Form.Item>
+              <Button htmlType="submit">Add Price</Button>
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
     </div>
   );

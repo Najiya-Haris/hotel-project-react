@@ -19,22 +19,18 @@ import { useSelector } from "react-redux";
 
 function Mydishes() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
-
   const token = userDetails.tokens[userDetails.tokens.length - 1];
   const [form] = Form.useForm();
   const [editData, setEditingData] = useState(false);
-
   const { Meta } = Card;
   const { Option } = Select;
   const [dishes, setDishes] = useState([]);
-
   const normFile = (e) => {
     if (Array.isArray(e)) {
       return e;
     }
     return e?.fileList;
   };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,10 +40,10 @@ function Mydishes() {
           },
         });
         console.log("getmydishes", response);
-        if(response.data.isSuccess){
-          setDishes(response.data.response);
-        }else{
-          message.error(response.data.error)
+        if (response.data.isSuccess) {
+          setDishes(response.data.response.data);
+        } else {
+          message.error(response.data.error);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -55,18 +51,18 @@ function Mydishes() {
     };
 
     fetchData();
-  }, [token]);
-
-  const onFinish = async (FormData) => {
+  }, []);
+  const onFinish = async (values) => {
+    console.log("values", values);
     try {
       if (!editData) {
         const response = await axios.post(
           `${config.apiUrl}/addFoodByChef`,
-          FormData,
+          values,
           {
             headers: {
               Authorization: token,
-              "Content-Type": "multipart/form-data",
+              // "Content-Type": "multipart/form-data",
             },
           }
         );
@@ -74,40 +70,61 @@ function Mydishes() {
           const newFood = response.data.response.data[0];
 
           setDishes((prevData) => [...prevData, newFood]);
+          setIsModalOpen(false);
           message.success("Dish added successfully");
-         
+          form.resetFields();
         } else {
           message.error(response.data.message);
         }
       } else {
+        const payload = {
+          dishId: values.dishId,
+          name: values.name,
+          description: values.description,
+          category: values.category,
+        };
         const response = await axios.post(
           `${config.apiUrl}/editMyDishes`,
-          FormData,
+          values,
           {
             headers: {
               Authorization: token,
-              "Content-Type": "multipart/form-data",
+              // "Content-Type": "multipart/form-data",
             },
           }
         );
-        console.log("response", response);
+        console.log("edit", response);
+        if (response.data.isSuccess) {
+          setDishes((prevData) =>
+            prevData.map((item) =>
+              item._id === response.data.response._id
+                ? response.data.response
+                : item
+            )
+          );
+          message.success("edited successfuly");
+          form.resetFields();
+          setIsModalOpen(false);
+        }
       }
     } catch (err) {
       console.log("Error in adding dish:", err);
       message.error("Failed to add dish");
     }
   };
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const editingModal = (dish) => {
+    console.log(dish._id);
     setEditingData(true);
     setIsModalOpen(true);
     form.setFieldsValue({
       name: dish.name,
       description: dish.description,
       category: dish.category,
+      dishId: dish._id,
     });
   };
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -132,6 +149,7 @@ function Mydishes() {
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
+          footer={false}
         >
           <Form
             name="basic"
@@ -152,6 +170,9 @@ function Mydishes() {
             encType="multipart/form-data"
             form={form}
           >
+            <Form.Item label="Id" name="dishId" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
             <Form.Item
               label="name of food"
               name="name"
@@ -223,7 +244,7 @@ function Mydishes() {
             data={dish}
             setDishes={setDishes}
             setModalOpen={setIsModalOpen}
-            editingModal={editingModal}
+            editingModal={() => editingModal(dish)}
             linkTo="/single"
           />
         ))}

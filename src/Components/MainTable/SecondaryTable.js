@@ -18,57 +18,38 @@ function SecondaryTable({
   showModals,
   setIsVisible,
   editData,
+  edit,
+  clearFormFields,
+  formprop,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
-
-  // useEffect(() => {
-  // form.setFieldsValue({test:'Test'})
-  // }, [])
-
-  const handleFormFinish = async (values) => {
-    try {
-      const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("phonenNumber", values.phoneNumber);
-      formData.append("email", values.email);
-      formData.append("gender", values.gender);
-      formData.append("experience", values.experience);
-      formData.append("password", values.password);
-      formData.append("confirmPassword", values.confirmPassword);
-      formData.append("userType", values.userType);
-      if (values.upload && values.upload.length > 0) {
-        formData.append("image", values.upload[0].originFileObj);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
- useEffect(() => {
-  if (editData) {
+  const [add, setAdd] = useState(false);
+  console.log(add)
+  if (edit && add === false) {
     form.setFieldsValue({
       name: editData?.name,
+      email:editData?.email,
       phoneNumber: editData?.phoneNumber,
-      email: editData?.email,
-      gender: editData?.gender,
-      experience: editData?.experience,
-      userType: editData?.userType,
-    });
-  } else {
-    // Reset the form fields when not editing
-    form.resetFields();
+      gender:editData?.gender,
+      experience:editData?.experience,
+      userType:editData?.userType
+    })
+  }else{
+    form.resetFields()
   }
-}, [editData]);
+
   const showModal = () => {
+    setAdd(true)
     setIsModalOpen(true);
     setIsVisible(true);
   };
-
   const handleOk = () => {
     setIsModalOpen(false);
   };
 
   const handleCancel = () => {
+    setAdd(false)
     setIsModalOpen(false);
     setIsVisible(false);
   };
@@ -76,12 +57,13 @@ function SecondaryTable({
   // const onFinish = (values) => {
   //   console.log("Success:", values);
   // };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+  const onFinishSuccess = () => {
+    onFinish()
+    setAdd(false)
   };
 
   return (
-    <div>
+    <div >
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <Button
           style={{ backgroundColor: "green", borderColor: "green" }}

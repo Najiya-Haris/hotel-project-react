@@ -1,2 +1,2 @@
 export const managerEditEndPoint='/editManager'
-export const vieChefendpoints='/manager/viewCashier'
+export const vieChefendpoints='/manager/viewChef'

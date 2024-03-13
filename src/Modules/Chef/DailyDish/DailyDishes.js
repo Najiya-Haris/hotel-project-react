@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../../../config/Config";
 import { useSelector } from "react-redux";
-import { Card, Space, Checkbox, Button ,InputNumber} from "antd";
+import { Card, Space, Checkbox, Button, InputNumber,message } from "antd";
 import FoodCard from "../../../Components/FoodCarad/FoodCrad";
 import { useNavigate } from "react-router-dom";
 
@@ -36,45 +36,40 @@ function DailyDishes() {
   const handleStockChange = (value, dishId) => {
     setDishStocks({ ...dishStocks, [dishId]: value });
   };
-  const handleAddToMenu = () => {
-    const selectedDishes = getCheckedDishes();
-    console.log("selected", selectedDishes);
+  const handleAddToMenu = async () => {
     try {
-      axios
-        .post(
-          `${config.apiUrl}/addTodaysMenu`,
-         selectedDishes ,
-          {
-            headers: {
-              Authorization: token,
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((response) => {
-          
-          console.log("Dishes added to today's menu:", selectedDishes);
-          navigate("/menu");
-        })
-        .catch((error) => {
-          console.error("Error adding dishes to today's menu:", error);
-        });
+      const selectedDishes = getCheckedDishes();
+
+      const response = await axios.post(
+        `${config.apiUrl}/addTodaysMenu`,
+        selectedDishes,
+        {
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setSelectedItems(response.data[0].response);
+      message.success("Successfully added to todays menu")
+      // navigate("/menu")
     } catch (error) {
-      console.error("Error adding dishes to today's menu:", error);
+      console.log(error);
     }
   };
-  
+
 
   const getCheckedDishes = () => {
     const selectedDishIds = Object.keys(checkedItems).filter(
       (id) => checkedItems[id]
     );
-  
+
     const selectedDishes = selectedDishIds.map((id) => {
       const dish = dailyDishes.find((dish) => dish._id === id);
-      return { foodId: dish._id, ...dish, stock: dishStocks[dish._id] || 0 };
+      return { dishId: dish._id, ...dish, stock: dishStocks[dish._id] || 0 };
     });
-  
+
     return selectedDishes;
   };
   return (
