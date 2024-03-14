@@ -36,17 +36,25 @@ const Layouts = (props) => {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
   const token = userDetails.tokens[userDetails.tokens.length - 1];
   let userType = userDetails.userType;
-  console.log("fcccccccccccc", userType);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleMenuClick = (e) => {
     if (e.key === "logout") {
-      const response = axios.delete(`${config.apiUrl}/logout`, userType, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      console.log("hiii", response);
+      const logout = async () => {
+        console.log("usertype", userType);
+        const response = await axios.delete(
+          `${config.apiUrl}/logOut`,
+          userType,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        console.log("hiii", response);
+      };
+      logout();
       dispatch(logoutUser());
       navigate("/login");
     }

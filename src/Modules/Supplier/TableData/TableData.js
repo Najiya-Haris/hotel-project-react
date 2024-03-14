@@ -10,6 +10,7 @@ import axios from "axios";
 import config from "../../../config/Config";
 import { useSelector } from "react-redux";
 import tableimage from "../../../assets/table.svg";
+import tableimage2 from "../../../assets/tables.svg";
 import { useLocation } from "react-router-dom";
 
 function TableData() {
@@ -30,6 +31,7 @@ function TableData() {
           },
         }
       );
+      console.log("suppu", response);
 
       setTableData(response.data.response);
     } catch (error) {
@@ -79,18 +81,18 @@ function TableData() {
     }
   };
   const [selectedTableId, setSelectedTableId] = useState(null);
-  const [status,setStatus]=useState("")
+  const [status, setStatus] = useState("");
   const [isConfirmTableModalOpen, setIsConfirmTableModalOpen] = useState(false);
   const handleConfirmTableModalOpen = (tableId) => {
     setSelectedTableId(tableId);
-    setStatus("selected")
+    setStatus("selected");
     setIsConfirmTableModalOpen(true);
   };
   console.log(selectedTableId);
-  const handleConfirm = async (tableId,status) => {
-  console.log('status : ',status)
+  const handleConfirm = async (tableId, status) => {
     const response = await axios.post(
-      `${config.apiUrl}/selectOrDeselectTable`,{tableId,status},
+      `${config.apiUrl}/selectOrDeselectTable`,
+      { tableId, status },
       {
         headers: {
           Authorization: token,
@@ -98,9 +100,11 @@ function TableData() {
       }
     );
     console.log("kkkkkk", response);
-
-    message.success("Your table has been confirmed");
-    navigate("/todaysmenu", { state: { tableId: selectedTableId } });
+    if (response.data.isSuccess) {
+      setStatus("selected");
+      message.success("Your table has been confirmed");
+      navigate("/todaysmenu", { state: { tableId: selectedTableId } });
+    }
   };
 
   return (
@@ -174,7 +178,12 @@ function TableData() {
             className="table-item"
             onClick={() => handleConfirmTableModalOpen(tableItem._id)}
           >
-            <img src={tableimage} />
+            {tableItem.status === "selected" ? (
+              <img src={tableimage2} />
+            ) : (
+              <img src={tableimage} />
+            )}
+
             <div className="table-name ml-12">{tableItem.name}</div>
           </div>
         ))}
@@ -182,7 +191,7 @@ function TableData() {
           isOpen={isConfirmTableModalOpen}
           message="Are you sure you want to cofirm this table?"
           onClose={() => setIsConfirmTableModalOpen(false)}
-          onConfirm={()=>handleConfirm(selectedTableId,status)}
+          onConfirm={() => handleConfirm(selectedTableId, status)}
         />
       </div>
     </div>

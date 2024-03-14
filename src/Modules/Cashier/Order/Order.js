@@ -13,13 +13,13 @@ function Order() {
   const columns = [
     {
       title: "Table Name",
-      dataIndex: "tableName",
-      key: "tableName",
+      dataIndex: "tablename",
+      key: "tablename",
     },
     {
       title: "Supplier Name",
-      dataIndex: "supplierName",
-      key: "supplierName",
+      dataIndex: "suppliername",
+      key: "suppliername",
     },
     {
       key: "4",
@@ -45,8 +45,9 @@ function Order() {
         },
       });
       console.log("cash",response);
+      setData(response.data.data.data)
 
-      setData(response.data.response.data);
+     
     } catch (error) {
       console.error("Error fetching data:", error);
     }

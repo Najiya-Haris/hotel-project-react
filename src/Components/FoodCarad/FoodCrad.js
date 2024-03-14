@@ -13,7 +13,13 @@ import { useSelector } from "react-redux";
 import DailyDishes from "../../Modules/Chef/DailyDish/DailyDishes";
 
 const FoodCard = ({
-   data, name, onClick, price, setDishes, setModalOpen, editingModal 
+  data,
+  name,
+  onClick,
+  price,
+  setDishes,
+  setModalOpen,
+  editingModal,
 }) => {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
   const token = userDetails.tokens[userDetails.tokens.length - 1];
@@ -21,11 +27,9 @@ const FoodCard = ({
   const handleDeleteClick = () => {
     setIsDeleteModalVisible(true);
   };
-
   const handleEditClick = () => {
     editingModal(data._id);
   };
-
   const handleDeleteConfirm = async () => {
     try {
       const response = await axios.delete(`${config.apiUrl}/deleteFoodByChef`, {
@@ -65,21 +69,25 @@ const FoodCard = ({
       >
         <Card.Meta title={data?.name} description={data?.description} />
         {data.price && (
-          <p style={{ marginTop: 10, fontWeight: "bold" }}>Price: {data?.price}</p>
+          <p style={{ marginTop: 10, fontWeight: "bold" }}>
+            Price: {data?.price}
+          </p>
         )}
-        
+
         <div style={{ textAlign: "right" }}>
-          {userDetails.userType !== "manager" && (
             <>
               <DeleteOutlined
                 style={{ marginRight: "15px" }}
                 onClick={handleDeleteClick}
               />
-              <EditOutlined key="edit" onClick={() => handleEditClick(data._id)} />
+              <EditOutlined
+                key="edit"
+                onClick={() => handleEditClick(data._id)}
+              />
             </>
-          )}
+          
         </div>
-   
+
         {/* {price && <p>Price: {price}</p>} */}
       </Card>
 

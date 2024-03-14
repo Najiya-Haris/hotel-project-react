@@ -42,7 +42,7 @@ function TodaysMenu() {
     };
 
     fetchData();
-  }, [token]);
+  }, []);
 
   const { tableId } = state ?? "";
   console.log("id", tableId);

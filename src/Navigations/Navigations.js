@@ -35,12 +35,18 @@ export const managerMenuItems = [
       { key: 4, label: "tableview", link: "tableviewmanager" },
     ],
   },
-
   {
-    key: "sub3",
+    key: "sub4",
     icon: <NotificationOutlined />,
     label: "Payment History",
     children: [{ key: 4, label: "payment", link: "payment" }],
+  },
+
+  {
+    key: "sub5",
+    icon: <NotificationOutlined />,
+    label: "Todaysmenu",
+    children: [{ key: 4, label: "todaysmenu", link: "viewTodaysMenu" }],
   },
 ];
 
@@ -61,6 +67,15 @@ export const chefMenuItems = [
     label: "orderlist",
     children: [
       { key: 4, label: "order",link: "orderlist"},
+  
+    ],
+  },
+  {
+    key: "sub3",
+    icon: <LaptopOutlined />,
+    label: "Todaysmenu",
+    children: [
+      { key: 4, label: "todays menu",link: "TodaysMenuchef"},
   
     ],
   },

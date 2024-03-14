@@ -9,48 +9,15 @@ import { useSelector } from "react-redux";
 function OrderList() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
   const token = userDetails.tokens[userDetails.tokens.length - 1];
-  const [isConfirmOrderModalOpen, setIsConfirmOrderModalOpen] = useState(false);
+  const [updatestatus,setUpdateStatus]=useState("")
 
   const { Option } = Select;
 
   useEffect(async () => {
     try {
-      const response = await axios.get(`${config.apiUrl}/viewOrderList`, {
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json",
-        },
-      });
-      console.log("response", response);
-      if (response.data.isSuccess) {
-        const formattedData = response.data.response.map((order) => {
-          const latestStatus =
-            order.chefUpdates.length > 0
-              ? order.chefUpdates[order.chefUpdates.length - 1].status
-              : "Unknown";
-          return {
-            id: order._id,
-            dish: order.foodName,
-            quantity: order.items[0].quantity,
-            price: order.totalPrice,
-            status: latestStatus,
-          };
-        });
-        setData(formattedData);
-      } else {
-        message.error(response.data.error);
-      }
-    } catch (error) {
-      console.error("Error fetching dishes:", error);
-    }
-  }, []);
-
-  const handleStatusChange = async (orderId, status) => {
-    console.log("oooo", orderId);
-    try {
       const response = await axios.post(
-        `${config.apiUrl}/updateStatusByChef`,
-        { orderId, status },
+        `${config.apiUrl}/viewOrderList`,
+        {},
         {
           headers: {
             Authorization: token,
@@ -58,20 +25,40 @@ function OrderList() {
           },
         }
       );
-      console.log("ress", response);
+console.log("ressppp",response);
       if (response.data.isSuccess) {
-        console.log("data : ", data);
-        // data.forEach((item)=>{
-        //   if(item.id===orderId){
-        //     item.status=status;
-        //   }
-        // })
-      } else {
-        message.error(response.data.error);
+        const formattedData = response?.data?.response.map((order, index) => ({
+          id: order._id,
+          key: index + 1,
+          dish: order.items[0].foodName,
+          quantity: order.items[0].quantity,
+          price: order.items[0].price,
+        }));
+        setData(formattedData);
       }
     } catch (error) {
-      console.error("Error updating status:", error);
-      message.error("Failed to update status");
+      console.error("Error fetching dishes:", error);
+    }
+  }, []);
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const response = await axios.post(
+        `${config.apiUrl}/updateStatusBySupplier`,
+        { orderId, newStatus },
+        {
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("resshh", response);
+      if (response.data.success) {
+        setUpdateStatus(response.data.response.items)
+      }
+    } catch (err) {
+      console.log(err.message);
     }
   };
 
@@ -92,18 +79,18 @@ function OrderList() {
     {
       key: "4",
       title: "status",
-      render: (record, menuIndex) => {
+      render: (record) => {
         return (
           <>
             <Select
               placeholder="update status"
-              defaultValue={record.status}
+              defaultValue={record.newstatus}
               onChange={(value) => {
-                console.log(record);
+                console.log(record)
                 handleStatusChange(record.id, value);
               }}
             >
-              <Option value="served">served</Option>
+              <Option value="ready_to_payment">ReadyToPay</Option>
               <Option value="pending">pending</Option>
               <Option value="cancel">cancel</Option>
             </Select>

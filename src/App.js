@@ -38,8 +38,10 @@ import TableViews from "./Modules/Manager/Tabledatas/Tableviews";
 import Success from "./Modules/Cashier/Success/Success";
 import NotFound from "./Pages/Notfound/NotFound";
 import Verify from "./Pages/verify/Verify";
-import Orderdetails from "./Modules/Manager/Order/Orderdetails"
+import Orderdetails from "./Modules/Manager/Order/Orderdetails";
 import ShowTable from "./Modules/Manager/ShowTable/ShowTable";
+import ViewTodaysMenu from "./Modules/Manager/ViewTodaysMenu/ViewTodaysMenu";
+import TodaysMenus from "./Modules/Chef/Todaysmenu/TodaysMenus";
 
 function App() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
@@ -52,18 +54,17 @@ function App() {
     menuItems = chefMenuItems;
   } else if (userDetails && userDetails.userType === "supplier") {
     menuItems = supplierMenuItems;
+  } else if (userDetails && userDetails.userType === "cashier") {
+    menuItems = cashierMenuItems;
   }
- else if (userDetails && userDetails.userType === "cashier") {
-  menuItems = cashierMenuItems;
-}
 
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/forget" element={<Forget/>} />
-        <Route path="/otp" element={<Otp/>} />
-        <Route path="/verify" element={<Verify/>} />
+        <Route path="/forget" element={<Forget />} />
+        <Route path="/otp" element={<Otp />} />
+        <Route path="/verify" element={<Verify />} />
         <Route
           path="/*"
           element={
@@ -79,24 +80,24 @@ function App() {
                   <Route path="/supplier" element={<SupplierDashboard />} />
                   <Route path="/cashier" element={<CashierDashboard />} />
                   <Route path="/mydishes" element={<Mydishes />} />
-                  <Route path="/single" element={<SingleFood/>} />
-                  <Route path="/table" element={<TableData/>} />
-                  <Route path="/orderlist" element={<OrderList/>} />
-                  <Route path="/alldishes" element={<AllDishes/>} />
-                  <Route path="/order" element={<Order/>} />
-                  <Route path="/todaysmenu" element={<TodaysMenu/>} />
-                  <Route path="/payment" element={<PaymentHistory/>} />
-                  <Route path="/menu" element={<ChefMenu/>} />
-                  <Route path="/tableview" element={<TableView/>} />
-                  <Route path="/dailydish" element={<DailyDishes/>} />
-                  <Route path="/billing" element={<Billing/>} />
-                  <Route path="/razorpay" element={<RazorPay/>} />
-                  <Route path="/tabless" element={<TableViews/>} />
-                  <Route path="/paymentsuccess" element={<Success/>} />
-                  <Route path="/orderlistmanager" element={<Orderdetails/>} />
-                  <Route path="/tableviewmanager" element={<ShowTable/>} />
-
-                  
+                  <Route path="/single" element={<SingleFood />} />
+                  <Route path="/table" element={<TableData />} />
+                  <Route path="/orderlist" element={<OrderList />} />
+                  <Route path="/alldishes" element={<AllDishes />} />
+                  <Route path="/order" element={<Order />} />
+                  <Route path="/todaysmenu" element={<TodaysMenu />} />
+                  <Route path="/payment" element={<PaymentHistory />} />
+                  <Route path="/menu" element={<ChefMenu />} />
+                  <Route path="/tableview" element={<TableView />} />
+                  <Route path="/dailydish" element={<DailyDishes />} />
+                  <Route path="/billing" element={<Billing />} />
+                  <Route path="/razorpay" element={<RazorPay />} />
+                  <Route path="/tabless" element={<TableViews />} />
+                  <Route path="/paymentsuccess" element={<Success />} />
+                  <Route path="/orderlistmanager" element={<Orderdetails />} />
+                  <Route path="/tableviewmanager" element={<ShowTable />} />
+                  <Route path="/viewTodaysMenu" element={<ViewTodaysMenu />} />
+                  <Route path="/TodaysMenuchef" element={<TodaysMenus />} />
                 </Routes>
               </Layouts>
             ) : (
@@ -104,7 +105,7 @@ function App() {
             )
           }
         />
-         <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

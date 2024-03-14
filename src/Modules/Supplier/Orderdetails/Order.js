@@ -58,8 +58,8 @@ function Order() {
         return (
           <>
             <Select
-              placeholder="update status"
-              defaultValue={record.status}
+              placeholder={record.supplierStatus}
+              defaultValue={record.supplierStatus}
               onChange={(value) => {
                 console.log(record);
                 handleStatusChange(record.id, value);

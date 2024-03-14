@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../../../config/Config";
 import { useSelector } from "react-redux";
-import { Card, Space, Checkbox, Button, InputNumber,message } from "antd";
+import { Card, Space, Checkbox, Button, InputNumber, message } from "antd";
 import FoodCard from "../../../Components/FoodCarad/FoodCrad";
 import { useNavigate } from "react-router-dom";
 
@@ -39,6 +39,13 @@ function DailyDishes() {
   const handleAddToMenu = async () => {
     try {
       const selectedDishes = getCheckedDishes();
+      const invalidDishes = selectedDishes.filter((dish) => dish.stock <= 0);
+      if (invalidDishes.length > 0) {
+        message.error(
+          "Some dishes cannot be added to today's menu due to insufficient stock."
+        );
+        return;
+      }
 
       const response = await axios.post(
         `${config.apiUrl}/addTodaysMenu`,
@@ -52,13 +59,12 @@ function DailyDishes() {
       );
 
       setSelectedItems(response.data[0].response);
-      message.success("Successfully added to todays menu")
+      message.success("Successfully added to todays menu");
       // navigate("/menu")
     } catch (error) {
       console.log(error);
     }
   };
-
 
   const getCheckedDishes = () => {
     const selectedDishIds = Object.keys(checkedItems).filter(

@@ -1,31 +1,35 @@
 import React, { useState } from "react";
-import { Button, Form, Input, Radio ,message} from "antd";
+import { Button, Form, Input, Radio, message } from "antd";
 import config from "../../config/Config";
+import {useNavigate} from "react-router-dom"
 import axios from "axios";
-
-
 
 function Otp() {
   const [otp, setOtp] = useState("");
-   const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
+  const navigate=useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${config.apiUrl}/verifyOTPAndStoreUser`, {
-        otp,email,
-
-      });
+      const response = await axios.post(
+        `${config.apiUrl}/verifyOTPAndStoreUser`,
+        {
+          otp,
+          email,
+        }
+      );
 
       if (response.data.isSuccess) {
-        console.log("Success:", response.data.message); 
+        console.log("Success:", response);
+        navigate("/verify")
       } else {
-        message.error(response.data.error)
-        console.error("Error:", response.data.error); 
+        message.error(response.data.error);
+        console.error("Error:", response.data.error);
       }
     } catch (error) {
-      console.error("Error:", error); 
+      console.error("Error:", error);
     }
   };
   return (
@@ -34,8 +38,8 @@ function Otp() {
         <div className="empire">Hotel Empire</div>
       </div>
       <div className="log_card items-center justify-center h-[420px] bg-white">
-        <Form  layout="vertical">
-            <Form.Item
+        <Form layout="vertical">
+          <Form.Item
             label="please enter your Email Address"
             name="email"
             rules={[
@@ -44,15 +48,11 @@ function Otp() {
           >
             <Input value={email} onChange={(e) => setEmail(e.target.value)} />
           </Form.Item>
-          <Form.Item
-            label="please enter your otp"
-            name="otp"
-          
-          >
+          <Form.Item label="please enter your otp" name="otp">
             <Input value={otp} onChange={(e) => setOtp(e.target.value)} />
           </Form.Item>
           <Form.Item>
-            <Button  htmlType="submit" onClick={handleSubmit}>
+            <Button htmlType="submit" onClick={handleSubmit}>
               submit
             </Button>
           </Form.Item>

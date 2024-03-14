@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Tables from "../../../Components/Table/Tables";
-import { Button, Modal, Radio,message } from "antd";
+import { Button, Modal, Radio, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import config from "../../../config/Config";
@@ -11,11 +11,11 @@ function Billing() {
   const navigate = useNavigate();
   const userDetails = useSelector((state) => state.user.loginUserDetails);
   const token = userDetails?.tokens[userDetails.tokens.length - 1];
-  useEffect(()=>{
-    if(userDetails?.userType!=="cashier"){
-      navigate(`/${userDetails.userType}`)
+  useEffect(() => {
+    if (userDetails?.userType !== "cashier") {
+      navigate(`/${userDetails.userType}`);
     }
-  })
+  });
   useEffect(() => {
     if (data.length > 0) {
       const grandTotalRow = {
@@ -25,20 +25,17 @@ function Billing() {
         quantity: "",
         total: grandTotal,
       };
-      setData((prevData) => [...prevData.filter((item) => item.key !== "grandTotal"), grandTotalRow]);
+      setData((prevData) => [
+        ...prevData.filter((item) => item.key !== "grandTotal"),
+        grandTotalRow,
+      ]);
     }
   }, [grandTotal]);
   const columns = [
     {
-      title: "no",
-      dataIndex: "no",
-      key: "no",
-    },
-
-    {
       title: "dishname",
-      dataIndex: "dish",
-      key: "dish",
+      dataIndex: "foodname",
+      key: "foodname",
     },
     {
       title: "Quantity",
@@ -50,30 +47,34 @@ function Billing() {
       dataIndex: "total",
       key: "total",
     },
+    {
+      title: "payment status",
+      dataIndex: "paid",
+      key: "paid",
+    },
   ];
   const [data, setData] = useState([]);
-
-
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${config.apiUrl}/viewOrdersServed`, {
-        headers: {
-          Authorization: token,
-        },
-      });
+      const response = await axios.get(
+        `${config.apiUrl}/getReadyToPaymentOrders`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
       console.log("res:cashier", response);
-
-      if (response.data.isSuccess) {
-        // Transform the response data into the format expected by the table
-        const formattedData = response.data.response.data.map((order, index) => ({
+      if (response.data.success) {
+        const formattedData = response.data.data.data.map((order, index) => ({
           key: index + 1,
-          dish: order.items.map((item) => item.foodName).join(", "),
-          quantity: order.items.reduce((total, item) => total + item.quantity, 0),
+          foodname: order.foodname,
+          dish: order.items.map(item => item.foodname).join(", "), // Join multiple food names if there are multiple items
+          quantity: order.items.map(item => item.quantity).join(", "), // Join multiple quantities if there are multiple items
           total: order.totalPrice,
+          paid:order.items.map(item => item.paid).join(", "),// Assuming totalPrice is the total price of the order
         }));
         setData(formattedData);
-        const total = formattedData.reduce((acc, item) => acc + item.total, 0);
-        setGrandTotal(total);
       } else {
         message.error(response.data.error);
       }
@@ -84,27 +85,8 @@ function Billing() {
 
   useEffect(() => {
     fetchData();
-  }, [token]);
-
-  const tableData = [
-    {
-      key: "1",
-      dish: "biriyani",
-      no: "1",
-      quantity: "2",
-      total: 1332,
-    },
-    {
-      key: "2",
-
-      dish: "puttu",
-      no: "2",
-      quantity: "9",
-      total: 1332,
-    },
-  ];
+  }, []);
   const [value, setValue] = useState(null);
-
 
   const grandTotalRow = {
     key: "grandTotal",
@@ -119,9 +101,9 @@ function Billing() {
   };
   const handleOk = () => {
     if (value === "cod") {
-      navigate("/paymentsuccess",{replace:true});
+      navigate("/paymentsuccess", { replace: true });
     } else {
-      navigate("/razorpay",{replace:true});
+      navigate("/razorpay", { replace: true });
     }
     setIsModalOpen(false);
   };
@@ -129,7 +111,6 @@ function Billing() {
     setIsModalOpen(false);
   };
 
-  const tableDataWithGrandTotal = [...tableData, grandTotalRow];
   return (
     <div>
       <Tables columns={columns} dataSource={data} />
