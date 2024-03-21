@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Radio, message } from "antd";
 import config from "../../config/Config";
-import {useNavigate} from "react-router-dom"
+import {useNavigate,useLocation} from "react-router-dom"
 import axios from "axios";
 function Verify() {
-  const [otp, setOtp] = useState("");
-  const [email, setEmail] = useState("");
+  const { state } = useLocation();
+  console.log("lll",state);
+  const { email ,otp} = state ?? "";
   const [newPassword, setNewPassword] = useState("");
   const navigate=useNavigate()
     const handleSubmit = async (e) => {
@@ -40,18 +41,7 @@ function Verify() {
       </div>
       <div className="log_card items-center justify-center h-[420px] bg-white">
         <Form layout="vertical">
-          <Form.Item
-            label="please enter your Email Address"
-            name="email"
-            rules={[
-              { required: true, message: "Please enter your new password!" },
-            ]}
-          >
-            <Input value={email} onChange={(e) => setEmail(e.target.value)} />
-          </Form.Item>
-          <Form.Item label="please enter your otp" name="otp">
-            <Input value={otp} onChange={(e) => setOtp(e.target.value)} />
-          </Form.Item>
+        
           <Form.Item label="please enter your new password" name="newpassword">
             <Input
               value={newPassword}

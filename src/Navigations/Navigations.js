@@ -61,21 +61,23 @@ export const chefMenuItems = [
   
     ],
   },
+
   {
     key: "sub2",
     icon: <LaptopOutlined />,
-    label: "orderlist",
+    label: "Todaysmenu",
     children: [
-      { key: 4, label: "order",link: "orderlist"},
+      { key: 4, label: "todays menu",link: "TodaysMenuchef"},
   
     ],
   },
   {
     key: "sub3",
     icon: <LaptopOutlined />,
-    label: "Todaysmenu",
+    label: "order",
     children: [
-      { key: 4, label: "todays menu",link: "TodaysMenuchef"},
+      { key: 4, label: "orderlist",link: "orderlistchef"},
+      { key: 4, label: "orderhistory",link: "orderhistory"},
   
     ],
   },
@@ -107,7 +109,7 @@ export const cashierMenuItems = [
     key: "sub2",
     icon: <LaptopOutlined />,
     label: "order",
-    children: [{ key: 4, label: "orderlist", link: "/order" }],
+    children: [{ key: 4, label: "orderlist", link: "/billing" }],
   },
   {
     key: "sub3",

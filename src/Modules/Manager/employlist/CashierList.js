@@ -33,7 +33,7 @@ function CashierList() {
           }
         );
 
-        setData(response.data.response.data);
+        setData(response.data.response);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

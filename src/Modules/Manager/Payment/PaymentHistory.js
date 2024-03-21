@@ -19,6 +19,18 @@ function PaymentHistory() {
           title: 'amount recieved',
           dataIndex: 'amountPaid',
         }, 
+        {
+          title: 'order Id',
+          dataIndex: 'orderId',
+        }, 
+        {
+          title: 'dish Id',
+          dataIndex: 'dishId',
+        }, 
+        {
+          title: 'currency',
+          dataIndex: 'currency',
+        }, 
       ]
     
       function formatDate(dateString) {

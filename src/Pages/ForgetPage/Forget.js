@@ -18,7 +18,7 @@ function Forget() {
 
       if (response.data.isSuccess) {
         console.log("Success:", response.data.message);
-        navigate("/otp");
+        navigate("/otp",{ state: { email: email } });
       } else {
         message.error(response.data.error);
         console.error("Error:", response.data.error);

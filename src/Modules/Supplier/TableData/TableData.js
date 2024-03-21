@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./TableData.css";
 import table from "../../../assets/table.svg";
 import tables from "../../../assets/tables.svg";
@@ -12,13 +12,13 @@ import { useSelector } from "react-redux";
 import tableimage from "../../../assets/table.svg";
 import tableimage2 from "../../../assets/tables.svg";
 import { useLocation } from "react-router-dom";
-
+import UploadWidget from "../../Chef/Cloudinary/UploadWidget";
 function TableData() {
   const { state } = useLocation();
-  // const { message } = state
-
+  const [tableData, setTableData] = useState([]);
+  const [imageUrl, setImageUrl] = useState("");
   const userDetails = useSelector((state) => state.user.loginUserDetails);
-
+  const orderDetails = useSelector((state) => state.order?.orderDetails);
   const token = userDetails.tokens[userDetails.tokens.length - 1];
   const fetchData = async () => {
     try {
@@ -31,20 +31,34 @@ function TableData() {
           },
         }
       );
-      console.log("suppu", response);
 
-      setTableData(response.data.response);
+      const updatedTableData = response.data.response?.map((table) => {
+        for (let i = 0; i < orderDetails.length; i++) {
+          if (
+            orderDetails[i].items[0].paid === true &&
+            table._id === orderDetails[i].tableId
+          ) {
+            return { ...table, status: "deselected" };
+          }
+        }
+        return table;
+      });
+
+      setTableData(updatedTableData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
+  const handleImageUpload = (imageUrl) => {
+    setImageUrl(imageUrl);
+  };
   useEffect(() => {
     fetchData();
   }, []);
 
+
   const navigate = useNavigate();
-  const [tableData, setTableData] = useState([]);
+
   const normFile = (e) => {
     if (Array.isArray(e)) {
       return e;
@@ -63,48 +77,67 @@ function TableData() {
   const [form] = Form.useForm();
 
   const onFinish = async (values) => {
+  
     try {
-      const response = await axios.post(`${config.apiUrl}/addTable`, values, {
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json",
-        },
-      });
-      setTableData([...tableData, response.data.response.data[0]]);
-      console.log("tableData", tableData);
-      form.resetFields();
-      setIsModalOpen(false);
-      message.success("Table created successfully");
+      
+        const response = await axios.post(
+          `${config.apiUrl}/addTable`,
+        {...values,imageUrl}, 
+        {
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("tableData", response);
+      if (response.data.isSuccess) {
+        setTableData([...tableData, response.data.response[0]]);
+        message.success("Table created successfully");
+        form.resetFields();
+        setIsModalOpen(false)
+      }
+    
     } catch (error) {
       console.error("Error:", error);
       message.error("Failed to create table");
     }
-  };
+}
+
   const [selectedTableId, setSelectedTableId] = useState(null);
   const [status, setStatus] = useState("");
   const [isConfirmTableModalOpen, setIsConfirmTableModalOpen] = useState(false);
   const handleConfirmTableModalOpen = (tableId) => {
-    setSelectedTableId(tableId);
-    setStatus("selected");
-    setIsConfirmTableModalOpen(true);
-  };
-  console.log(selectedTableId);
-  const handleConfirm = async (tableId, status) => {
-    const response = await axios.post(
-      `${config.apiUrl}/selectOrDeselectTable`,
-      { tableId, status },
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
-    console.log("kkkkkk", response);
-    if (response.data.isSuccess) {
+    const selectedTable = tableData.find((table) => table._id === tableId);
+    if (selectedTable.status === "selected") {
+      message.info("This table has already been selected");
+    } else {
+      setSelectedTableId(tableId);
       setStatus("selected");
-      message.success("Your table has been confirmed");
-      navigate("/todaysmenu", { state: { tableId: selectedTableId } });
+      setIsConfirmTableModalOpen(true);
     }
+  };
+  // const handleConfirm = async (tableId, status) => {
+  //   const response = await axios.post(
+  //     `${config.apiUrl}/selectOrDeselectTable`,
+  //     { tableId, status },
+  //     {
+  //       headers: {
+  //         Authorization: token,
+  //       },
+  //     }
+  //   );
+
+  //   if (response.data.isSuccess) {
+  //     setStatus("selected");
+  //     message.success("Your table has been confirmed");
+  //     navigate("/todaysmenu", { state: { tableId: selectedTableId } });
+  //   }
+  // };
+  const handleConfirm = () => {
+    // message.success("your order has been confirmed");
+    setIsConfirmTableModalOpen(false);
+    navigate("/todaysmenu",{ state: { tableId: selectedTableId } });
   };
 
   return (
@@ -120,6 +153,7 @@ function TableData() {
           >
             Add
           </Button>
+
           <Modal
             title="Basic Modal"
             open={isModalOpen}
@@ -143,6 +177,7 @@ function TableData() {
               }}
               onFinish={onFinish}
               autoComplete="off"
+              form={form}
             >
               <Form.Item
                 label="tablename"
@@ -162,11 +197,18 @@ function TableData() {
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
               >
-                <Upload name="logo" action="/upload.do" listType="picture">
-                  <Button icon={<UploadOutlined />}>Click to upload</Button>
-                </Upload>
+                <Button icon={<UploadOutlined />}>
+                  <UploadWidget onImageUpload={handleImageUpload} />
+                </Button>
               </Form.Item>
-              <Button htmlType="submit">Submit</Button>
+              <Form.Item
+                wrapperCol={{
+                  offset: 8,
+                  span: 16,
+                }}
+              >
+                <Button htmlType="submit">Submit</Button>
+              </Form.Item>
             </Form>
           </Modal>
         </div>

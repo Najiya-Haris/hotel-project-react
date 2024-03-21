@@ -4,42 +4,57 @@ import { Button, message, Dropdown, Select } from "antd";
 import ConfirmationModal from "../../../Components/ConfirmationModal/ConfirmationModal";
 import axios from "axios";
 import config from "../../../config/Config";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
+import { getOrderDetails } from "../../../Redux/OrderReducer";
 
 function OrderList() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
   const token = userDetails.tokens[userDetails.tokens.length - 1];
-  const [updatestatus,setUpdateStatus]=useState("")
-
+  const [updatestatus, setUpdateStatus] = useState("");
+  const dispatch = useDispatch();
   const { Option } = Select;
 
-  useEffect(async () => {
+  useEffect( () => {
     try {
-      const response = await axios.post(
-        `${config.apiUrl}/viewOrderList`,
-        {},
-        {
-          headers: {
-            Authorization: token,
+
+      const fetchData=async()=>{
+        const response = await axios.post(
+          `${config.apiUrl}/viewOrderList`,
+          {},
+          {
+            headers: {
+              Authorization: token,
             "Content-Type": "application/json",
           },
         }
       );
-console.log("ressppp",response);
-      if (response.data.isSuccess) {
-        const formattedData = response?.data?.response.map((order, index) => ({
-          id: order._id,
-          key: index + 1,
-          dish: order.items[0].foodName,
-          quantity: order.items[0].quantity,
-          price: order.items[0].price,
-        }));
+      console.log("supplier", response);
+        if (response.data.isSuccess) {
+          dispatch(getOrderDetails(response?.data?.response))
+          let order=response.data.response
+          const formattedData = response?.data?.response.map((order, index) => ({
+            id: order._id,
+            key: index + 1,
+            dish: order.items[0].foodName,
+            tablename:order.tableName,
+            quantity: order.items[0].quantity,
+            price: order.items[0].price,
+            supplierStatus: order.supplierStatus, 
+          }));
+          
         setData(formattedData);
+        
       }
+    }
+    fetchData()
     } catch (error) {
       console.error("Error fetching dishes:", error);
     }
   }, []);
+
+  const orderDetails=useSelector((state)=>state?.order?.orderDetails)
+
+  console.log("order",orderDetails);
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
@@ -55,8 +70,11 @@ console.log("ressppp",response);
       );
       console.log("resshh", response);
       if (response.data.success) {
-        setUpdateStatus(response.data.response.items)
-      }
+        const updatedData = data.map((order) => 
+        order._id === orderId ? { ...order, supplierStatus: newStatus } : order
+      );
+      setData(updatedData); 
+    }
     } catch (err) {
       console.log(err.message);
     }
@@ -77,16 +95,21 @@ console.log("ressppp",response);
       dataIndex: "price",
     },
     {
+      title: "Tablename",
+      dataIndex: "tablename",
+    },
+    {
       key: "4",
       title: "status",
+      // dataIndex: "supplierStatus",
       render: (record) => {
         return (
           <>
             <Select
               placeholder="update status"
-              defaultValue={record.newstatus}
+              defaultValue={record?.supplierStatus} 
               onChange={(value) => {
-                console.log(record)
+                console.log(record);
                 handleStatusChange(record.id, value);
               }}
             >

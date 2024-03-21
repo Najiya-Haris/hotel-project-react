@@ -42,6 +42,9 @@ import Orderdetails from "./Modules/Manager/Order/Orderdetails";
 import ShowTable from "./Modules/Manager/ShowTable/ShowTable";
 import ViewTodaysMenu from "./Modules/Manager/ViewTodaysMenu/ViewTodaysMenu";
 import TodaysMenus from "./Modules/Chef/Todaysmenu/TodaysMenus";
+import OrderListChef from "./Modules/Chef/OrdeForChef/OrderListChef";
+import OrderHistory from "./Modules/Chef/OrderHisory/OrderHistory";
+import UploadWidget from "./Modules/Chef/Cloudinary/UploadWidget";
 
 function App() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
@@ -84,7 +87,7 @@ function App() {
                   <Route path="/table" element={<TableData />} />
                   <Route path="/orderlist" element={<OrderList />} />
                   <Route path="/alldishes" element={<AllDishes />} />
-                  <Route path="/order" element={<Order />} />
+                  {/* <Route path="/order" element={<Order />} /> */}
                   <Route path="/todaysmenu" element={<TodaysMenu />} />
                   <Route path="/payment" element={<PaymentHistory />} />
                   <Route path="/menu" element={<ChefMenu />} />
@@ -98,6 +101,9 @@ function App() {
                   <Route path="/tableviewmanager" element={<ShowTable />} />
                   <Route path="/viewTodaysMenu" element={<ViewTodaysMenu />} />
                   <Route path="/TodaysMenuchef" element={<TodaysMenus />} />
+                  <Route path="/orderlistchef" element={<OrderListChef />} />
+                  <Route path="/orderhistory" element={<OrderHistory />} />
+                 
                 </Routes>
               </Layouts>
             ) : (

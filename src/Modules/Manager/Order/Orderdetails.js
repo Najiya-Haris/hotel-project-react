@@ -11,12 +11,12 @@ function Orderdetails() {
     const columns = [
       
         {
-          title: 'tableId',
-          dataIndex: 'tableId',
+          title: 'tableName',
+          dataIndex: 'tableName',
         },
         {
-            title: 'supplierId',
-            dataIndex: 'supplierId',
+            title: 'supplierName',
+            dataIndex: 'supplierName',
           },
           {
             title: 'totalPrice',
@@ -24,11 +24,11 @@ function Orderdetails() {
           },
       , {
           key: "4",
-          title: "status",
+          title: "suppierStatus",
           render: (record) => {
             return (
               <>
-                <Button className="act">pending</Button>
+                <Button className="act">{record.supplierStatus}</Button>
               </>
             );
           },
@@ -45,7 +45,7 @@ function Orderdetails() {
       });
       console.log("response:",response.data.response);
 
-      setData(response.data.response)
+      setData(response?.data.response)
     
       // setDailyDishes(response.data.response);
     } catch (error) {

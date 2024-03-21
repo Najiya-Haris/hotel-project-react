@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 
 function Billing() {
   const [grandTotal, setGrandTotal] = useState(0);
+  const [datas, setDatas] = useState(null);
   const navigate = useNavigate();
   const userDetails = useSelector((state) => state.user.loginUserDetails);
   const token = userDetails?.tokens[userDetails.tokens.length - 1];
@@ -48,11 +49,30 @@ function Billing() {
       key: "total",
     },
     {
-      title: "payment status",
+      title: "Payment Status",
       dataIndex: "paid",
       key: "paid",
+      render: (text, record) => {
+        if (text === "false") {
+          return (
+            <Button
+              style={{ backgroundColor: "grey" }}
+              onClick={() => handlePayment(record)}
+            >
+              Pay
+            </Button>
+          );
+        } else {
+          return "Paid";
+        }
+      },
     },
   ];
+  const handlePayment = (record) => {
+    console.log(record);
+    setDatas(record);
+    showModal();
+  };
   const [data, setData] = useState([]);
   const fetchData = async () => {
     try {
@@ -68,11 +88,11 @@ function Billing() {
       if (response.data.success) {
         const formattedData = response.data.data.data.map((order, index) => ({
           key: index + 1,
-          foodname: order.foodname,
-          dish: order.items.map(item => item.foodname).join(", "), // Join multiple food names if there are multiple items
-          quantity: order.items.map(item => item.quantity).join(", "), // Join multiple quantities if there are multiple items
+          foodname: order.items.map((item) => item.foodname).join(", "),
+          dish: order.items.map((item) => item.foodname).join(", "),
+          quantity: order.items.map((item) => item.quantity).join(", "),
           total: order.totalPrice,
-          paid:order.items.map(item => item.paid).join(", "),// Assuming totalPrice is the total price of the order
+          paid: order.items.map((item) => item.paid).join(", "),
         }));
         setData(formattedData);
       } else {
@@ -103,7 +123,7 @@ function Billing() {
     if (value === "cod") {
       navigate("/paymentsuccess", { replace: true });
     } else {
-      navigate("/razorpay", { replace: true });
+      navigate("/razorpay", { state: { record: datas } }, { replace: true });
     }
     setIsModalOpen(false);
   };
@@ -114,14 +134,6 @@ function Billing() {
   return (
     <div>
       <Tables columns={columns} dataSource={data} />
-      <Button
-        className="ml-80 mt-1
-      h-[43px]"
-        onClick={showModal}
-        style={{ backgroundColor: "grey" }}
-      >
-        Proceed to payment
-      </Button>
       <Modal
         title="Choose any method"
         open={isModalOpen}

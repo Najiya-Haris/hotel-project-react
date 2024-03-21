@@ -105,7 +105,6 @@ function TodaysMenus() {
   );
 
   const handleMenuClick = async (key, record) => {
-    console.log("token", token);
     let menuId = record._id;
     if (key === "edit") {
       setIsModalOpen(true);
@@ -161,9 +160,9 @@ function TodaysMenus() {
       }
     );
     console.log("response", response);
-    if(response.data.isSuccess){
-      const updatedMenu = response.data.response; 
-      const newData = data.map(item => {
+    if (response.data.isSuccess) {
+      const updatedMenu = response.data.response;
+      const newData = data.map((item) => {
         if (item._id === updatedMenu._id) {
           return updatedMenu;
         }
@@ -172,7 +171,6 @@ function TodaysMenus() {
       setData(newData);
       setIsModalOpen(false);
       message.success("Dish updated successfully");
-      
     }
   };
   return (

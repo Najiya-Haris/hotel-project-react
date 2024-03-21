@@ -50,7 +50,6 @@ function TodaysMenu() {
   console.log("token", token);
   const navigate = useNavigate();
 
-
   const [selectedDishes, setSelectedDishes] = useState([]);
 
   const handleCheckboxChange = (data, checked) => {
@@ -62,7 +61,6 @@ function TodaysMenu() {
       );
     }
   };
-  
 
   console.log(selectedDishes, "ddddd");
   const columns = [
@@ -100,9 +98,10 @@ function TodaysMenu() {
           value={text}
           min={0}
           max={record.stock}
-          onChange={(value) =>{console.log(record);
-            handleQuantityChange(record._id, value, record.stock)}
-          }
+          onChange={(value) => {
+            console.log(record);
+            handleQuantityChange(record._id, value, record.stock);
+          }}
         />
       ),
     },
@@ -122,29 +121,30 @@ function TodaysMenu() {
       }
       return item;
     });
-  
+
     setDishes(updatedData);
-  
+
     const updatedSelectedDishes = selectedDishes.map((dish) => {
       if (dish._id === key) {
         return { ...dish, quantity: quantity };
       }
       return dish;
     });
-  
+
     setSelectedDishes(updatedSelectedDishes);
   };
-console.log("selecteddishesss: ",selectedDishes);
+  console.log("selecteddishesss: ", selectedDishes);
   const handleOrder = async () => {
+    const supplierStatus = "pending";
     try {
       const response = await axios.post(
         `${config.apiUrl}/orderList`,
-        { selectedDishes, tableId },
+        { selectedDishes, tableId, supplierStatus },
 
         {
           headers: {
             Authorization: token,
-            "Content-Type": "application/json", 
+            "Content-Type": "application/json",
           },
         }
       );
@@ -180,7 +180,6 @@ console.log("selecteddishesss: ",selectedDishes);
     selectedCategory === "all"
       ? dishes
       : dishes.filter((dish) => dish.category === selectedCategory);
-
 
   return (
     <>

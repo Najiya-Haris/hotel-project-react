@@ -10,6 +10,7 @@ function ViewTodaysMenu() {
     const userDetails = useSelector((state) => state.user.loginUserDetails);
     const token = userDetails.tokens[userDetails.tokens.length - 1];
     const [data,setData]=useState([])
+    
     useEffect(() => {
         const fetchData = async () => {
           try {

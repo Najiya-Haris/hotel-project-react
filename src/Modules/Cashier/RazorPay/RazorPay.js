@@ -2,9 +2,12 @@ import React, { useEffect } from 'react';
 import axios from "axios";
 import config from '../../../config/Config';
 import {useSelector} from "react-redux"
-import {useNavigate} from 'react-router-dom'
+import {useNavigate,useLocation} from 'react-router-dom';
+
 
 function RazorPay() {
+  const { state } = useLocation();
+  console.log("state`", state);
   const userDetails = useSelector((state) => state.user.loginUserDetails);
   const token = userDetails.tokens[userDetails.tokens.length - 1];
   const navigate=useNavigate()
@@ -12,22 +15,24 @@ function RazorPay() {
     const loadRazorpay = () => {
       const options = {
         key: "rzp_test_169B3oRa1aOdmp", // Enter the Key ID generated from the Dashboard
-        amount: "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        amount: state.record.total*100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
         currency: "INR",
         name: "Acme Corp", //your business name
         description: "Test Transaction",
         image: "https://example.com/your_logo",
         order_id: "", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
         handler: function (response) {
+          console.log("response in razorpay",response)
           if(response.razorpay_payment_id){
             const payment=async()=>{
-              const response=await axios.post(`${config.apiUrl}/calculateBill`,{},{
+              const response2=await axios.post(`${config.apiUrl}/calculateBill`,{},{
                 headers: {
                   Authorization: token,
                   "Content-Type": "application/json",
                 },
               });
-              if(response.data.isSuccess){
+              console.log("razooooo",response);
+              if(response2.data.isSuccess){
                 navigate('/paymentSuccess',{replace:true})
               }
             }

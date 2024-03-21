@@ -14,8 +14,9 @@ function DailyDishes() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [dishStocks, setDishStocks] = useState({});
   const navigate = useNavigate();
+  const [todaysmenu,setTodaysMenu]=useState([])
 
-  useEffect(async () => {
+  const fetchDailyDishes = async () => {
     try {
       const response = await axios.get(`${config.apiUrl}/dailyDish`, {
         headers: {
@@ -26,7 +27,34 @@ function DailyDishes() {
       setDailyDishes(response.data.response);
     } catch (error) {
       console.error("Error fetching dishes:", error);
+      message.error("Failed to fetch daily dishes");
     }
+  };
+
+  const fetchTodaysMenu = async () => {
+    try {
+      const response = await axios.get(
+        `${config.apiUrl}/viewTodaysMenuByChef`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      if (response.data.isSuccess) {
+        setTodaysMenu(response.data.response);
+      } else {
+        message.error(response.data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      message.error("Failed to fetch today's menu");
+    }
+  };
+  
+  useEffect(() => {
+    fetchDailyDishes();
+    fetchTodaysMenu();
   }, []);
 
   const handleCheckboxChange = (e, dishId) => {
@@ -34,18 +62,28 @@ function DailyDishes() {
     setCheckedItems({ ...checkedItems, [dishId]: isChecked });
   };
   const handleStockChange = (value, dishId) => {
+    console.log('handle stock change', value, dishId);
     setDishStocks({ ...dishStocks, [dishId]: value });
   };
   const handleAddToMenu = async () => {
     try {
       const selectedDishes = getCheckedDishes();
+      const dishesAlreadyAdded=todaysmenu.filter((dish)=>{
+        selectedDishes.forEach((item)=>{
+          if(dish.name===item.name){
+            message.error(`${dish.name} already added. Update stocks in Todays Menu`)
+            navigate("/TodaysMenuChef")
+            return
+          }
+        })
+      })
       const invalidDishes = selectedDishes.filter((dish) => dish.stock <= 0);
       if (invalidDishes.length > 0) {
         message.error(
           "Some dishes cannot be added to today's menu due to insufficient stock."
         );
         return;
-      }
+        }
 
       const response = await axios.post(
         `${config.apiUrl}/addTodaysMenu`,
@@ -57,10 +95,13 @@ function DailyDishes() {
           },
         }
       );
-
+      console.log(response);
+      if(response.data[0].isSuccess){
+      
       setSelectedItems(response.data[0].response);
       message.success("Successfully added to todays menu");
-      // navigate("/menu")
+     
+      } 
     } catch (error) {
       console.log(error);
     }
@@ -83,12 +124,12 @@ function DailyDishes() {
       {dailyDishes.map((dish, index) => (
         <div key={index} style={{ display: "flex", alignItems: "center" }}>
           <Checkbox onChange={(e) => handleCheckboxChange(e, dish._id)} />
-          <FoodCard key={index} data={dish} />
-          <InputNumber
+          <FoodCard key={index} data={dish} handleStockChange={handleStockChange} />
+          {/* <InputNumber
             min={0}
             defaultValue={0}
             onChange={(value) => handleStockChange(value, dish._id)}
-          />
+          /> */}
         </div>
       ))}
       <div style={{ position: "fixed", bottom: 20, right: 20 }}>

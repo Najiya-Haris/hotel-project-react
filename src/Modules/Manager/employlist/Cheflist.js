@@ -23,7 +23,7 @@ function Cheflist() {
         });
         console.log("chefres", response);
 
-        setData(response.data.response.data.chefs);
+        setData(response.data.response.chefs);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

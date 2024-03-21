@@ -16,6 +16,7 @@ import config from "../../../config/Config";
 import "../MyDish/MyDishes.css";
 import FoodCard from "../../../Components/FoodCarad/FoodCrad";
 import { useSelector } from "react-redux";
+import UploadWidget from "../Cloudinary/UploadWidget";
 
 function Mydishes() {
   const userDetails = useSelector((state) => state.user.loginUserDetails);
@@ -24,6 +25,7 @@ function Mydishes() {
   const [editData, setEditingData] = useState(false);
   const { Meta } = Card;
   const { Option } = Select;
+  const [imageUrl, setImageUrl] = useState("");
   const [dishes, setDishes] = useState([]);
   const normFile = (e) => {
     if (Array.isArray(e)) {
@@ -41,7 +43,7 @@ function Mydishes() {
         });
         console.log("getmydishes", response);
         if (response.data.isSuccess) {
-          setDishes(response.data.response.data);
+          setDishes(response.data.response);
         } else {
           message.error(response.data.error);
         }
@@ -52,9 +54,16 @@ function Mydishes() {
 
     fetchData();
   }, []);
+  const handleImageUpload = (imageUrl) => {
+    setImageUrl(imageUrl);
+  };
   const onFinish = async (values) => {
-    console.log("values", values);
+    if (imageUrl) {
+      values = { ...values, imageUrl }; // Add imageUrl to the values object
+    }
+    console.log("valuesssss",imageUrl);
     try {
+      console.log("try");
       if (!editData) {
         const response = await axios.post(
           `${config.apiUrl}/addFoodByChef`,
@@ -66,15 +75,16 @@ function Mydishes() {
             },
           }
         );
+        console.log("addresponse",response);
         if (response.data.isSuccess) {
-          const newFood = response.data.response.data[0];
+          const newFood = response.data.response[0];
 
           setDishes((prevData) => [...prevData, newFood]);
           setIsModalOpen(false);
           message.success("Dish added successfully");
           form.resetFields();
         } else {
-          message.error(response.data.message);
+          message.error(response.data.error);
         }
       } else {
         const payload = {
@@ -205,9 +215,9 @@ function Mydishes() {
               valuePropName="fileList"
               getValueFromEvent={normFile}
             >
-              <Upload name="logo" action="/upload.do" listType="picture">
-                <Button icon={<UploadOutlined />}>Click to upload</Button>
-              </Upload>
+             <Button icon={<UploadOutlined />}>
+                  <UploadWidget onImageUpload={handleImageUpload} />
+                </Button>
             </Form.Item>
             <Form.Item
               name="category"
